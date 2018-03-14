@@ -1,0 +1,5 @@
+hadoop fs -mkdir /data
+hadoop fs -mkdir /data/raw
+hadoop fs -mkdir /data/decomposed
+hadoop fs -mkdir /data/modelled
+hadoop fs -mkdir /data/schema
