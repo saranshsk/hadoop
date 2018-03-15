@@ -1,0 +1,151 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww24040\viewh14280\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 837  sudo mount -t vboxsf vagrant /vagrant\
+  838  pwd\
+  839  ls -ltr\
+  840  hadoop\
+  841  hadoop versi\
+  842  hadoop version\
+  843  hadoop --version\
+  844  clear\
+  845  ls\
+  846  pwd\
+  847  ls\
+  848  cd /vagrant/\
+  849  s -ltr\
+  850  ls-ltr\
+  851  ls -ltr\
+  852  ls\
+  853  clear\
+  854  pwd\
+  855  cd /home/vagrant/sw\
+  856  ls -ltr\
+  857  cd spark-2.1.0-bin-hadoop2.7/\
+  858  ls\
+  859  echo $JAVA_HOME\
+  860  vim\
+  861  vim ~/.bashrc \
+  862  ls\
+  863  cd\
+  864  pyspark \
+  865  cd /vagrant/\
+  866  ls -ltr\
+  867  wc -l 201503hourly.txt \
+  868  pwd\
+  869  vim sometext.txt\
+  870  wc -l babynames.csv \
+  871  top\
+  872  wc -l babynames.csv \
+  873  head babynames.csv \
+  874  top\
+  875  ls\
+  876  pwd\
+  877  cd /vagrant/\
+  878  ls\
+  879  cd /home/vagrant/\
+  880  cat babynames.csv > error.csv\
+  881  cat > error.csv \
+  882  cat error.csv \
+  883  pwd\
+  884  gedit first_program.py\
+  885  vim first_program.py\
+  886  which spark-submit \
+  887  cat first_program.py \
+  888  spark-submit first_program.py \
+  889  sudo init 0\
+  890  ifconfig \
+  891  ls -ltr\
+  892  pyspark \
+  893  ls -ltr\
+  894  vim first_program.py \
+  895  spark-submit first_program.py \
+  896  vim first_program.py \
+  897  spark-submit first_program.py --master spark://vagrant:7077\
+  898  spark-submit --master spark://vagrant:7077 first_program.py \
+  899  spark-submit --master spark://vagrant:7077 --executer-memory 4000M first_program.py \
+  900  spark-submit --master spark://vagrant:7077 --executor-memory 4000M first_program.py \
+  901  pwd\
+  902  spark-submit --master spark://vagrant:7077 --executor-memory 4000M --executor-cores 4 first_program.py \
+  903  spark-submit --master spark://vagrant:7077 --executor-memory 4000M --executor-cores 3 first_program.py \
+  904  spark-submit --master spark://vagrant:7077 --executor-cores 4 first_program.py \
+  905  pwd\
+  906  cd sw/spark-2.1.0-bin-hadoop2.7/\
+  907  ls -ltr\
+  908  cd sbin/\
+  909  ls -ltr\
+  910  pyspark \
+  911  cd ../\
+  912  ls -ltr\
+  913  cd sbin/\
+  914  ls -ltr\
+  915  jps\
+  916  ./start-all.sh \
+  917  ./start-dfs.sh\
+  918  pwd\
+  919  cd ../../\
+  920  cd hadoop-2.7.3/sbin/\
+  921  ./start-dfs.sh\
+  922  jps\
+  923  hdfs dfs -copyFromLocal /home/vagrant/babynames.csv \
+  924  hdfs dfs -copyFromLocal /home/vagrant/babynames.csv /\
+  925  hostname\
+  926  nc -lk 5555\
+  927  cd /home/vagrant/\
+  928  ls\
+  929  nc -lk 5555\
+  930  pwd\
+  931  ls -ltr\
+  932  cd bigdata/\
+  933  ls -ltr\
+  934  cd ../\
+  935  lsltr\
+  936  ls -ltr\
+  937  cd /media/vagrant/\
+  938  ls\
+  939  cd /vagrant/\
+  940  ls -ltr\
+  941  mv 201503hourly.txt climate.txt\
+  942  pwd\
+  943  pwdppp\
+  944  pwd\
+  945  cat /etc/network/interfaces\
+  946  cd sw/spark-2.1.0-bin-hadoop2.7/\
+  947  cd sbin/\
+  948  ls -ltr\
+  949  start-master.sh\
+  950  ./start-master.sh \
+  951  jps\
+  952  ./start-slave.sh \
+  953  ./start-slave.sh spark://vagrant:7077 -c 2\
+  954  ls -ltr\
+  955  ./stop-slave.sh \
+  956  ./start-slave.sh \
+  957  ./start-slave.sh spark://vagrant:7077 -c 3 -m 3000M\
+  958  ./stop-slave.sh \
+  959  ./start-slave.sh spark://vagrant:7077 -c 3 -m 5000M\
+  960  ./stop-slave.sh \
+  961  ./start-slave.sh spark://vagrant:7077 -c 3 -m 5000M\
+  962  jps\
+  963  cd /home/vagrant/\
+  964  vim poster.py\
+  965  pwd\
+  966  mysql -uroot -proot\
+  967  cd sw/spark-2.1.0-bin-hadoop2.7/\
+  968  pyspark  --master spark://vagrant:7077\
+  969  pyspark  --jars /vagrant/mysql-connector-java-5.1.30.jar \
+  970  nc localhost 5555\
+  971  cd /vagrant/\
+  972  ls\
+  973  spark-submit streamapplication.py \
+  974  vim streamapplication.py \
+  975  spark-submit streamapplication.py localhost 5555\
+  976  vim streamapplication.py \
+  977  spark-submit streamapplication.py localhost 5555\
+  978  wall\
+  979  echo hello | wall\
+  980  spark-submit streamapplication.py localhost 5555\
+}

@@ -1,0 +1,683 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fswiss\fcharset0 ArialMT;\f1\fmodern\fcharset0 Courier;\f2\froman\fcharset0 Times-Roman;
+}
+{\colortbl;\red255\green255\blue255;\red255\green0\blue0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww24040\viewh14280\viewkind0
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 Username - assist\
+password - assist\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+ip address - 122.160.142.252\
+\kerning1\expnd0\expndtw0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \ul \ulc0 ###############################################################Start virtual machines on Ubuntu host through command line :
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+
+\f1 \cf0 \expnd0\expndtw0\kerning0
+VBoxManage startvm "VM name" --type headless\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\f0\b \cf0 \kerning1\expnd0\expndtw0 \ul \
+###############################################################Installing java 1.8:
+\b0 \ulnone \
+sudo add-apt-repository ppa:openjdk-r/ppa\
+sudo apt-get update\
+sudo apt-get install openjdk-8-jdk\
+java -version\
+\
+
+\b \ul ###############################################################Installing ssh server:
+\b0 \ulnone \
+sudo apt-get install openssh-server\
+\
+
+\b \ul ###############################################################Assigning static IP to the machine:\
+
+\b0 \ulnone sudo vi /etc/networks/interfaces\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+auto eth0\
+iface eth0 inet static\
+    address 192.168.1.2\
+    netmask 255.255.255.0\
+    gateway 192.168.1.1\
+\
+For Ubuntu < 14.04 use the networking init script:\
+sudo /etc/init.d/networking restart\
+\
+For Ubuntu versions 14.04 and newer use systemctl instead:\
+systemctl restart ifup@eth0\
+\
+sudo service network-manager restart\
+sudo ifconfig eth0 up\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Making entry to the hosts file:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 sudo gedit /etc/hosts\
+192.168.1.2	assist-namenode001\
+192.168.1.3	assist-namenode002-secondary\
+192.168.1.4	assist-datanode001\
+192.168.1.5 	assist-datanode002\
+\
+\pard\pardeftab720\sl280\partightenfactor0
+
+\b \cf0 \ul Generating ssh key on the name node server:
+\b0 \ulnone \
+assist@assist:~$ ssh-keygen \
+Generating public/private rsa key pair.\
+Enter file in which to save the key (/home/assist/.ssh/id_rsa): \
+Enter passphrase (empty for no passphrase): \
+Enter same passphrase again: \
+Your identification has been saved in /home/assist/.ssh/id_rsa.\
+Your public key has been saved in /home/assist/.ssh/id_rsa.pub.\
+The key fingerprint is:\
+b8:90:23:80:5c:30:4f:cf:f1:9d:e9:ca:f6:b1:e6:25 assist@assist\
+The key's randomart image is:\
++--[ RSA 2048]----+\
+| o.o .           |\
+|o = o o . o      |\
+|o. . o . +       |\
+| .   . ..        |\
+|  . + . S.       |\
+|   . o...        |\
+|      .+ E .     |\
+|      . ..=      |\
+|        o+       |\
++-----------------+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Changing the hostname for the cloned machines:\
+\pard\pardeftab720\sl280\partightenfactor0
+
+\b0 \cf0 \ulnone sudo vi /etc/hostname\
+<enter the new hostname>\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Configuring password less ssh between machines:\
+\pard\pardeftab720\sl280\partightenfactor0
+
+\b0 \cf0 \ulnone From name node run the blow commands:\
+ssh-copy-id assist@assist-datanode001\
+ssh-copy-id assist@assist-datanode002\
+ssh-copy-id assist-namenode002-secondary\
+Similarly run the command from all the other datanodes to enable passwordless ssh between many to many systems.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Mounting a shared folder from host to guest:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 sudo mkdir /softwares\
+sudo mount -t vboxsf softwares /softwares\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Installing Hadoop:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 sudo mkdir /usr/local/hadoop\
+sudo cp -r hadoop-2.8.1 /usr/local/hadoop/\
+sudo mv /usr/local/hadoop/hadoop-2.8.1/* /usr/local/hadoop/\
+sudo rmdir /usr/local/hadoop/hadoop-2.8.1\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Configuring hadoop related files:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 sudo gedit ~/.bashrc\
+export HADOOP_PREFIX=/usr/local/hadoop\
+export PATH=$PATH:$HADOOP_PREFIX/bin\
+\pard\pardeftab720\fi-540\partightenfactor0
+\cf0 Type \'93exec bash\'94 to source the bash variables again\
+\
+export HADOOP_PREFIX=/usr/local/hadoop\
+export PATH=$PATH:$HADOOP_PREFIX/bin\
+export CASSANDRA_HOME=/usr/local/cassandra\
+export SPARK_HOME=/usr/local/spark\
+export PATH=$SPARK_HOME/bin:$PATH\
+\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\fi-540\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 \ul Now to tell hadoop which Java to use make the below entry into the hadoop environment file using the command:\ulnone \
+sudo gedit \expnd0\expndtw0\kerning0
+/usr/local/hadoop/\kerning1\expnd0\expndtw0 etc/hadoop/hadoop-env.sh\
+Make the below entries into the file\
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64\
+export HADOOP_OPTS="$HADOOP_OPTS -Djava.net.preferIPv4Stack=true"\expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \
+\pard\pardeftab720\fi-540\partightenfactor0
+\cf0 \kerning1\expnd0\expndtw0 \ul Modify the\expnd0\expndtw0\kerning0
+ /usr/local/hadoop/etc/\kerning1\expnd0\expndtw0 core-site.xml file:\ulnone \
+<property>\
+<name>fs.default.name</name>\
+<value>hdfs://assist-namenode001:10001</value>\
+</property>\
+<property>\
+<name>hadoop.tmp.dir</name>\
+<value>/usr/local/hadoop/tmp</value>\
+</property>\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul Modifying the content of /usr/local/hadoop/etc/hdfs-site.xml file:\ulnone \
+<property>\
+<name>dfs.name.dir</name>\
+<value>/usr/local/hadoop/tmp/namenode</value>\
+</property>\
+<property>\
+<name>dfs.data.dir</name>\
+<value>/usr/local/hadoop/tmp/namenode</value>\
+<final>true</final>\
+</property>\
+<property>\
+<name>dfs.replication</name>\
+<value>2</value>\
+</property>\
+<property>\
+<name>dfs.permissions</name>\
+<value>false</value>\
+</property>\
+<property>\
+<name>dfs.datanode.use.datanode.hostname</name>\
+<value>false</value>\
+</property>\
+<property>\
+<name>dfs.namenode.datanode.registration.ip-hostname-check</name>\
+<value>false</value>\
+</property>\
+<property>\
+<name>dfs.namenode.http-address</name>\
+<value>assist-namenode001:50070</value>\
+<description>Your NameNode hostname for http access.</description>\
+</property>\
+<property>\
+<name>dfs.namenode.secondary.http-address</name>\
+<value>assist-namenode001:50090</value>\
+<description>Your Secondary NameNode hostname for http access.</description>\
+</property>\
+\
+\ul Modifying the content of /usr/local/hadoop/etc/yarn-site.xml file:\ulnone \
+<property>\
+<name>yarn.nodemanager.aux-services</name>\
+<value>mapreduce.shuffle</value>\
+<description>Long running service which executes on Node Manager(s) and provides MapReduce Sort and Shuffle functionality.</description>\
+</property>\
+<property>\
+<name>yarn.log-aggregation-enable</name>\
+<value>true</value>\
+<description>Enable log aggregation so application logs are moved onto hdfs and are viewable via web ui after the application completed. The default location on hdfs is '/log' and can be changed via yarn.nodemanager.remote-app-log-dir property</description>\
+</property>\
+<property>\
+<name>yarn.resourcemanager.scheduler.address</name>\
+<value>assist-namenode001:8030</value>\
+</property>\
+<property>\
+<name>yarn.resourcemanager.resource-tracker.address</name>\
+<value>assist-namenode001:8031</value>\
+</property>\
+<property>\
+<name>yarn.resourcemanager.address</name>\
+<value>assist-namenode001:8032</value>\
+</property>\
+<property>\
+<name>yarn.resourcemanager.admin.address</name>\
+<value>assist-namenode001:8033</value>\
+</property>\
+<property>\
+<name>yarn.resourcemanager.webapp.address</name>\
+<value>assist-namenode001:8088</value>\
+</property>\
+\
+\ul Modifying the content of /usr/local/hadoop/etc/mapred-site.xml\ulnone \
+<property>\
+<name>mapred.job.tracker</name>\
+<value>assist-namenode001:9001</value>\
+</property>\
+<property>\
+<name>mapreduce.framework.name</name>\
+<value>yarn</value>\
+</property>\
+\
+\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Copy over the hadoop configured directories over to the datanodes:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 scp -r /usr/local/hadoop/* assist@assist-datanode001:/usr/local/hadoop\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Format the name node before starting up the services:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 hdfs namenode -format\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Start the hadoop cluster:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 /usr/local/hadoop/sbin/start-all.sh\
+or use the separate commands for starting dfs and the yarn services using below commands in sequence\
+/usr/local/hadoop/sbin/start-dfs.sh\
+/usr/local/hadoop/sbin/start-yarn.sh\
+\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul Check the services on the name node:\ulnone \
+assist@assist-namenode001:/usr/local/hadoop/logs$ jps\
+22289 NameNode\
+23042 Jps\
+22515 SecondaryNameNode\
+22667 ResourceManager\
+\
+\ul Check the services on the datanodes:\ulnone \
+assist@assist-datanode001:/usr/local/hadoop/etc/hadoop$ jps\
+8177 DataNode\
+8403 Jps\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Stop the hadoop cluster services:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 /usr/local/hadoop/sbin/stop-all.sh\
+or use the separate commands for starting dfs and the yarn services using below commands in sequence\
+/usr/local/hadoop/sbin/stop-dfs.sh\
+/usr/local/hadoop/sbin/stop-yarn.sh\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Adding a new datanode to the cluster:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 Clone an existing datanode machine if available else clone the name node machine\
+Change the hostname for the newly created machine - sudo vi /etc/hostname\
+Change the ip address of the machine - \kerning1\expnd0\expndtw0 sudo vi /etc/networks/interfaces\expnd0\expndtw0\kerning0
+\
+Add new entries to the /etc/hosts file of the name node and the newly added machine itself - <ip-address><tab><hostname>\
+Change the entry in the slaves file to the name of the current host - sudo vi /usr/local/hadoop/etc/hadoop/slaves\
+In case the clone was done using a name node machine then create a new file named as master and add the hostname of the name node server in it - sudo vi /usr/local/hadoop/etc/hadoop/master\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Data node fails to start:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul \ulc2 WARN org.apache.hadoop.hdfs.server.common.Storage: Failed to add storage directory [DISK]:\ulnone \
+Delete the data directories on the datanode machine and re-create the directories. This issue occurs due to mismatch of the block-ids.\
+Once done format the hfs filesystem and re-start the services. There is a clusterID mismatch.\
+or\
+We must check clusterID at the namenode and compare it with the one at each grid folder as shown next.\
+1. @ namenode
+\b \
+
+\b0 more /hadoop/hdfs/namenode/current/VERSION\
+copy: clusterID=CID-6c775e94-4cfb-4366-9a8b-c0f359a2b5d3\
+2. @ datanode
+\b \
+
+\b0 paste: clusterID=CID-6c775e94-4cfb-4366-9a8b-c0f359a2b5d3\
+vim /grid/0/hadoop/hdfs/data/current/VERSION\
+vim /grid/1/hadoop/hdfs/data/current/VERSION\
+vim /grid/2/hadoop/hdfs/data/current/VERSION\
+3. @ datanode
+\b \
+
+\b0 Restart DataNode service (in my case via Ambari web frontend).
+\f2 \
+
+\f0 \
+\ul Path should be specified as a uri in configuration files. please update hdfs configuration:\
+\pard\pardeftab720\fi-540\partightenfactor0
+\cf0 \ulnone Use path as file:// whenever referring to the path of directories in the configuration files of the name node under /usr/local/hadoop/etc/\kerning1\expnd0\expndtw0 core-site.xml file:\
+<property>\
+<name>hadoop.tmp.dir</name>\
+<value>file:///usr/local/hadoop/tmp</value>\
+</property>\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \expnd0\expndtw0\kerning0
+\
+\pard\pardeftab720\fi-540\partightenfactor0
+\cf0 Use path as file:// whenever referring to the path of directories in the configuration files of the name node under/usr/local/hadoop/etc/hdfs-site.xml file:\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 <property>\
+<name>dfs.name.dir</name>\
+<value>file:///usr/local/hadoop/tmp/namenode</value>\
+</property>\
+<property>\
+<name>dfs.data.dir</name>\
+<value>file:///usr/local/hadoop/tmp/namenode</value>\
+<final>true</final>\
+</property>\
+<property>\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul \ulc0 ###############################################################\expnd0\expndtw0\kerning0
+Installing Cassandra on a single machine:
+\b0 \ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul Create the working directories:\ulnone \
+assist@assist-namenode001:/usr/local$ sudo mkdir cassandra\
+assist@assist-namenode001:/usr/local$ sudo chmod -R 777 cassandra/\
+Download cassandra tar file from the internet.\
+\
+\ul Make entry to the basic file to load the cassandra libraries on shell start:\ulnone \
+sudo gedit ~/.bashrc\
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64\
+export CASSANDRA_HOME=/usr/local/cassandra\
+\
+Logging into the cqlsh prompt:\
+./usr/local/cassandra/bin/cqlsh assist-namenode001\
+./usr/local/cassandra/bin/cqlsh assist-datanode001\
+\
+\ul Creating a new keyspace:\ulnone \
+create keyspace dev with replication = \{'class':'SimpleStrategy','replication_factor':1\};\
+\ul Creating a new table under newly created keyspace:\ulnone \
+use dev;\
+create table temp (tempid int primary key, temp_col1 varchar, temp_col2 varchar, temp_col3 varchar);\
+\ul Inserting data into the newly created table:\ulnone \
+insert into temp (tempid, temp_col1, temp_col2, temp_col3) values (1,'fred','smith','eng');\
+\ul Updating the old data:\ulnone \
+update temp set temp_col2 = 'fin' where tempid = 1;\
+\ul Creating index on table:\ulnone \
+create index idx_col1 on temp(temp_col1);\
+\ul Querying on the table using where clause:\ulnone \
+select * from temp where temp_col2 = 'fin';\
+Error - InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING"\
+select * from temp where temp_col2 = 'fin' allow filtering;\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Installing cassandra on multi node cluster machine:
+\b0 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 Machine 1(can be a datanode or the name node of the hadoop cluster):\
+Creating working directories:\ulnone \
+sudo mkdir /usr/local/cassandra/data\uc0\u8232 sudo mkdir /usr/local/cassandra/commitlog\u8232 sudo mkdir /usr/local/cassandra/saved_caches\
+\
+\ul Generate list of tokens for the whole ring:\ulnone \
+python -c 'print [str(((2**64 / 2) * i) - 2**63) for i in range(2)]'\
+or use the below link:\
+https://www.geroba.com/cassandra/cassandra-token-calculator/\
+\
+\ul After creating the directories edit the sudo mkdir /usr/local/cassandra/conf/cassandra.yml (configuration file) as given below:\ulnone \
+data_file_directories:\uc0\u8232 - /usr/local/cassandra/data\
+# commit log\uc0\u8232 commitlog_directory: /usr/local/cassandra/commitlog\
+# saved caches\uc0\u8232 saved_caches_directory: /usr/local/cassandra/saved_caches\
+cluster_name: \'91assist_cassandra_cluster\'92\
+initial_token: 0\
+seeds: \'93assist-namenode001,assist-datanode001\uc0\u8243 \
+listen_address:\'a0assist-namenode001\
+rpc_address:\'a0assist-namenode001\
+rpc_port: 9160\
+endpoint_snitch: RackInferringSnitch\
+auto_bootstrap: false #Add the following at the end of the yams file\
+\
+\ul Machine 2(can be a datanode or the name node of the hadoop cluster):\
+Creating working directories:\ulnone \
+sudo mkdir /usr/local/cassandra/data\uc0\u8232 sudo mkdir /usr/local/cassandra/commitlog\u8232 sudo mkdir /usr/local/cassandra/saved_caches\
+\
+\ul After creating the directories edit the sudo mkdir /usr/local/cassandra/conf/cassandra.yml (configuration file) as given below:\ulnone \
+data_file_directories:\uc0\u8232 - /usr/local/cassandra/data\
+# commit log\uc0\u8232 commitlog_directory: /usr/local/cassandra/commitlog\
+# saved caches\uc0\u8232 saved_caches_directory: /usr/local/cassandra/saved_caches\
+cluster_name: \'91assist_cassandra_cluster\'92\
+initial_token: -9223372036854775808\
+seeds: \'93assist-namenode001,assist-datanode001\uc0\u8243 \
+listen_address:\'a0assist-datanode001\
+rpc_address:\'a0assist-datanode001\
+rpc_port: 9160\
+endpoint_snitch: RackInferringSnitch\
+auto_bootstrap: false #Add the following at the end of the yaml file\
+\
+\ul Starting the cassandra services on all the machines inside the cluster:\
+cd \ulnone /usr/local/cassandra/\
+rm -rf commitlog/ logs/ saved_caches/ data/\
+mkdir commitlog/ logs/ saved_caches/ data/\
+./bin/cassandra -f\
+\
+\ul Monitoring the ring using command line:\ulnone \
+assist@assist-datanode001:/usr/local/cassandra$ bin/nodetool ring\
+Datacenter: 168\
+==========\
+Address      Rack        Status State   Load            Owns                Token                                       \
+                                                                            0                                           \
+192.168.1.4  1           Up     Normal  86.48 KB        50.00%              -9223372036854775808                        \
+192.168.1.2  1           Up     Normal  86.46 KB        50.00%              0                                           \
+\
+\ul Read more about the yams file from the below link:\ulnone \
+https://docs.datastax.com/en/cassandra/2.1/cassandra/configuration/configCassandra_yaml_r.html\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Installing Spark on single node cluster machine:\
+
+\b0 Create temp directory for spark processing:\ulnone \
+mkdir /usr/local/spark/tmp\
+\
+\ul Append the spark path into the bashrc file:\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ulnone export SPARK_HOME=/usr/local/spark\
+export PATH=$SPARK_HOME/bin:$PATH\
+source $HOME/.bashrc\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+\cf0 \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+\cf0 \ul Edit the below files in the conf directory:\ulnone \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 cd /usr/local/spark/conf\
+cp spark-env.sh.template spark-env.sh\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul gedit spark-env.sh\ulnone \
+export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64\
+export SPARK_WORKER_MEMORY=1g\
+export SPARK_WORKER_INSTANCES=2\
+export SPARK_MASTER_IP=192.168.1.2\
+export SPARK_MASTER_PORT=7077\
+export SPARK_WORKER_DIR=/usr/local/spark/tmp\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+\cf0 \
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 cp spark-defaults.conf.template spark-defaults.conf\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul gedit spark-defaults.conf\ulnone \
+spark.master                     spark:
+\i //
+\i0 assist-namenode001
+\i :7077
+\i0 \
+\
+cp slaves.template slaves\
+\ul gedit /usr/local/spark/conf/slaves\ulnone \
+assist-namenode001\
+\
+\ul Testing pyspark:\ulnone \
+assist@assist-namenode001:/usr/local/hadoop$ pyspark\
+Python 2.7.6 (default, Jun 22 2015, 17:58:13) \
+[GCC 4.8.2] on linux2\
+Type "help", "copyright", "credits" or "license" for more information.\
+Using Spark's default log4j profile: org/apache/spark/log4j-defaults.properties\
+Setting default log level to "WARN".\
+To adjust logging level use sc.setLogLevel(newLevel). For SparkR, use setLogLevel(newLevel).\
+17/12/07 14:42:30 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable\
+17/12/07 14:42:59 WARN ObjectStore: Version information not found in metastore. hive.metastore.schema.verification is not enabled so recording the schema version 1.2.0\
+17/12/07 14:42:59 WARN ObjectStore: Failed to get database default, returning NoSuchObjectException\
+17/12/07 14:43:01 WARN ObjectStore: Failed to get database global_temp, returning NoSuchObjectException\
+Welcome to\
+      ____              __\
+     / __/__  ___ _____/ /__\
+    _\\ \\/ _ \\/ _ `/ __/  '_/\
+   /__ / .__/\\_,_/_/ /_/\\_\\   version 2.2.0\
+      /_/\
+\
+Using Python version 2.7.6 (default, Jun 22 2015 17:58:13)\
+SparkSession available as 'spark'.\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Installing Spark on multi node cluster machine:\
+
+\b0 Copy over the spark directory onto the worker nodes:
+\b \
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+
+\b0 \cf0 \ulnone sudo mkdir /usr/local/spark\
+sudo chown -R assist:assist /usr/local/spark/\
+sudo scp -rp assist@assist-namenode001:/usr/local/spark/ /usr/local/spark/\
+sudo chown -R assist:assist /usr/local/spark/\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+\cf0 \ul Append the spark path into the bashrc file:
+\b \
+\pard\pardeftab720\sl280\partightenfactor0
+
+\b0 \cf0 \ulnone export SPARK_HOME=/usr/local/spark\
+export PATH=$SPARK_HOME/bin:$PATH\
+Resource the basic file - source $HOME/.bashrc\
+\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul On the Master node enter the ip addresses of all the worker nodes:
+\b \
+\pard\pardeftab720\sl280\partightenfactor0
+
+\b0 \cf0 \ulnone gedit /usr/local/spark/conf/slaves\
+assist-namenode001\
+assist-datanode001\
+\
+\pard\pardeftab720\sl280\partightenfactor0
+\cf0 \ul Start over the spark services using:\ulnone \
+./usr/local/spark/sbin/start-all.sh\
+\
+\ul Use jps to view the services on the master node:\ulnone \
+assist@assist-namenode001:/usr/local/spark$ jps\
+5280 Worker\
+3264 SecondaryNameNode\
+5121 Master\
+5222 Worker\
+5387 Jps\
+3451 ResourceManager\
+3070 NameNode\
+\
+\ul Use jps to view the services on the worker node:\ulnone \
+assist@assist-datanode001:/usr/local/spark/conf$ jps\
+18264 Worker\
+18380 Jps\
+18301 Worker\
+15070 DataNode\
+\
+\ul Open the web UI to view the services running on all the servers (master + worker) using below link:\ulnone \
+http://assist-namenode001:8080/#running-app\
+\
+\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\sl280\pardirnatural\partightenfactor0
+
+\b \cf0 \kerning1\expnd0\expndtw0 \ul ###############################################################\expnd0\expndtw0\kerning0
+Running a test program on the spark infrastructure:
+\b0 \ulnone \
+\ul Load a file into data frame and perform few operations such as:\ulnone \
+\
+
+\b \ul ####################Import packages for command auto completer#######################
+\b0 \ulnone \
+>>> import readline,rlcompleter\
+>>> readline.parse_and_bind('tab: complete')\
+
+\b \ul ####################Read and load file into memory#######################
+\b0 \ulnone \
+df2 = spark.read.csv('/home/assist/data_files/climate.csv', header = True, inferSchema = True)\
+
+\b \ul ####################View top 3 rows loaded in the dataframe#######################
+\b0 \ulnone \
+>>> df2.take(3) \
+[Row(WBAN=102, Date=20150301, Time=1, StationType=0, SkyCondition=u'CLR', SkyConditionFlag=u' ', Visibility=u'10.00', VisibilityFlag=u' ', WeatherType=u' ', WeatherTypeFlag=u' ', DryBulbFarenheit=u' -14', DryBulbFarenheitFlag=u' ', DryBulbCelsius=u'-25.6', DryBulbCelsiusFlag=u' ', WetBulbFarenheit=u'-14', WetBulbFarenheitFlag=u' ', WetBulbCelsius=u'-25.7', WetBulbCelsiusFlag=u' ', DewPointFarenheit=u' -19', DewPointFarenheitFlag=u' ', DewPointCelsius=u'-28.3', DewPointCelsiusFlag=u' ', RelativeHumidity=u' 78', RelativeHumidityFlag=u' ', WindSpeed=u' 6', WindSpeedFlag=u' ', WindDirection=u'200', WindDirectionFlag=u' ', ValueForWindCharacter=u' ', ValueForWindCharacterFlag=u' ', StationPressure=u'30.46', StationPressureFlag=u' ', PressureTendency=u' ', PressureTendencyFlag=u' ', PressureChange=u' ', PressureChangeFlag=u' ', SeaLevelPressure=u'30.78', SeaLevelPressureFlag=u' ', RecordType=u'AA', RecordTypeFlag=u' ', HourlyPrecip=u' ', HourlyPrecipFlag=u' ', Altimeter=u'30.64', AltimeterFlag=u' '), Row(WBAN=102, Date=20150301, Time=101, StationType=0, SkyCondition=u'CLR', SkyConditionFlag=u' ', Visibility=u'10.00', VisibilityFlag=u' ', WeatherType=u' ', WeatherTypeFlag=u' ', DryBulbFarenheit=u' -16', DryBulbFarenheitFlag=u' ', DryBulbCelsius=u'-26.7', DryBulbCelsiusFlag=u' ', WetBulbFarenheit=u'-16', WetBulbFarenheitFlag=u' ', WetBulbCelsius=u'-26.8', WetBulbCelsiusFlag=u' ', DewPointFarenheit=u' -21', DewPointFarenheitFlag=u' ', DewPointCelsius=u'-29.4', DewPointCelsiusFlag=u' ', RelativeHumidity=u' 77', RelativeHumidityFlag=u' ', WindSpeed=u' 3', WindSpeedFlag=u' ', WindDirection=u'280', WindDirectionFlag=u' ', ValueForWindCharacter=u' ', ValueForWindCharacterFlag=u' ', StationPressure=u'30.47', StationPressureFlag=u' ', PressureTendency=u' ', PressureTendencyFlag=u' ', PressureChange=u' ', PressureChangeFlag=u' ', SeaLevelPressure=u'30.80', SeaLevelPressureFlag=u' ', RecordType=u'AA', RecordTypeFlag=u' ', HourlyPrecip=u' ', HourlyPrecipFlag=u' ', Altimeter=u'30.66', AltimeterFlag=u' '), Row(WBAN=102, Date=20150301, Time=201, StationType=0, SkyCondition=u'CLR', SkyConditionFlag=u' ', Visibility=u'10.00', VisibilityFlag=u' ', WeatherType=u' ', WeatherTypeFlag=u' ', DryBulbFarenheit=u' -14', DryBulbFarenheitFlag=u' ', DryBulbCelsius=u'-25.6', DryBulbCelsiusFlag=u' ', WetBulbFarenheit=u'-14', WetBulbFarenheitFlag=u' ', WetBulbCelsius=u'-25.7', WetBulbCelsiusFlag=u' ', DewPointFarenheit=u' -19', DewPointFarenheitFlag=u' ', DewPointCelsius=u'-28.3', DewPointCelsiusFlag=u' ', RelativeHumidity=u' 78', RelativeHumidityFlag=u' ', WindSpeed=u' 0', WindSpeedFlag=u' ', WindDirection=u'000', WindDirectionFlag=u' ', ValueForWindCharacter=u' ', ValueForWindCharacterFlag=u' ', StationPressure=u'30.49', StationPressureFlag=u' ', PressureTendency=u' ', PressureTendencyFlag=u' ', PressureChange=u' ', PressureChangeFlag=u' ', SeaLevelPressure=u'30.81', SeaLevelPressureFlag=u' ', RecordType=u'AA', RecordTypeFlag=u' ', HourlyPrecip=u' ', HourlyPrecipFlag=u' ', Altimeter=u'30.67', AltimeterFlag=u' ')]\
+
+\b \ul ####################Count of the file loaded in memory#######################
+\b0 \ulnone \
+>>> df2.count()\
+4496262                      \
+
+\b \ul ####################Group by and sum on a column#######################  
+\b0 \ulnone                                                  \
+>>> df1.groupBy('Date').sum('Date').show()\
++--------+-------------+                                                        \
+|    Date|    sum(Date)|\
++--------+-------------+\
+|20150323|2819695148359|\
+|20150313|2902571986398|\
+|20150315|2874220781285|\
+|20150327|2949705617895|\
+|20150306|2836719778068|\
+|20150326|3038991566016|\
+|20150314|2994376961028|\
+|20150308|2861061631688|\
+|20150328|2847825705912|\
+|20150330|2809943368170|\
+|20150303|3153139563743|\
+|20150310|2972331927480|\
+|20150322|2900538100290|\
+|20150320|2978076243760|\
+|20150309|2897674885127|\
+|20150304|3107761235616|\
+|20150302|3019966061344|\
+|20150331|2760675948324|\
+|20150319|2928143605485|\
+|20150325|2948556756600|\
++--------+-------------+\
+only showing top 20 rows\
+\
+
+\b \ul ####################Count of the file loaded in memory#######################
+\b0 \ulnone \
+\
+./start-slave.sh spark://assist-namenode001:7077\
+\
+\pard\pardeftab720\sl280\partightenfactor0
+
+\f1 \cf0 hadoop fs -copyFromLocal /path/in/linux /hdfs/path\
+\
+\
+\
+\
+assist@assist-namenode001:/usr/local/hadoop$ hadoop fs -copyFromLocal /home/assist/Downloads/2008_manual_copy.csv /data/raw\
+assist@assist-namenode001:/usr/local/hadoop$ hadoop fs -copyFromLocal /home/assist/Downloads/2007_manual_copy.csv /data/raw\
+\
+\
+\
+Zookeeper#######################\
+\
+\
+\
+\
+}
