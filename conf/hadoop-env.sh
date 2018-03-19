@@ -22,8 +22,7 @@
 # remote nodes.
 
 # The java implementation to use.
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
-export HADOOP_OPTS="$HADOOP_OPTS -Djava.net.preferIPv4Stack=true"
+export JAVA_HOME=${JAVA_HOME}
 
 # The jsvc implementation to use. Jsvc is required to run secure datanodes
 # that bind to privileged ports to provide authentication of data transfer
@@ -53,6 +52,7 @@ done
 # Extra Java runtime options.  Empty by default.
 # For Kerberos debugging, an extended option set logs more invormation
 # export HADOOP_OPTS="-Djava.net.preferIPv4Stack=true -Dsun.security.krb5.debug=true -Dsun.security.spnego.debug"
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-amd64
 export HADOOP_OPTS="$HADOOP_OPTS -Djava.net.preferIPv4Stack=true"
 
 # Command specific options appended to HADOOP_OPTS when specified

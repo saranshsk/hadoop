@@ -17,7 +17,7 @@
 <!-- Site specific YARN configuration properties -->
 <property>
 <name>yarn.nodemanager.aux-services</name>
-<value>mapreduce.shuffle</value>
+<value>mapreduce_shuffle</value>
 <description>Long running service which executes on Node Manager(s) and provides MapReduce Sort and Shuffle functionality.</description>
 </property>
 <property>
@@ -27,23 +27,22 @@
 </property>
 <property>
 <name>yarn.resourcemanager.scheduler.address</name>
-<value>assist-namenode001:8030</value>
+<value>namenode1:8030</value>
 </property>
 <property>
 <name>yarn.resourcemanager.resource-tracker.address</name>
-<value>assist-namenode001:8031</value>
+<value>namenode1:8025</value>
 </property>
 <property>
 <name>yarn.resourcemanager.address</name>
-<value>assist-namenode001:8032</value>
+<value>namenode1:8050</value>
 </property>
 <property>
 <name>yarn.resourcemanager.admin.address</name>
-<value>assist-namenode001:8033</value>
+<value>namenode1:8033</value>
 </property>
 <property>
 <name>yarn.resourcemanager.webapp.address</name>
-<value>assist-namenode001:8088</value>
+<value>namenode1:8088</value>
 </property>
-
 </configuration>

@@ -19,10 +19,6 @@
 <configuration>
 <property>
 <name>fs.default.name</name>
-<value>hdfs://assist-namenode001:10001</value>
-</property>
-<property>
-<name>hadoop.tmp.dir</name>
-<value>file:///usr/local/hadoop/tmp</value>
+<value>hdfs://namenode1:10001</value>
 </property>
 </configuration>
