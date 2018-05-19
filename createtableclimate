@@ -1,0 +1,137 @@
+CREATE TABLE climate (
+WBAN  int  ,
+Date1  date  ,
+Time  int  ,
+StationType  int  ,
+SkyCondition  string  ,
+SkyConditionFlag  string  ,
+Visibility  int  ,
+VisibilityFlag  string  ,
+WeatherType  string  ,
+WeatherTypeFlag  string  ,
+DryBulbFarenheit  int  ,
+DryBulbFarenheitFlag  string  ,
+DryBulbCelsius  int  ,
+DryBulbCelsiusFlag  string  ,
+WetBulbFarenheit  int  ,
+WetBulbFarenheitFlag  string  ,
+WetBulbCelsius  int  ,
+WetBulbCelsiusFlag  string  ,
+DewPointFarenheit  int  ,
+DewPointFarenheitFlag  string  ,
+DewPointCelsius  int  ,
+DewPointCelsiusFlag  string  ,
+RelativeHumidity  int  ,
+RelativeHumidityFlag  string  ,
+WindSpeed  int  ,
+WindSpeedFlag  string  ,
+WindDirection  int  ,
+WindDirectionFlag  string  ,
+ValueForWindCharacter  string  ,
+ValueForWindCharacterFlag  string  ,
+StationPressure  int  ,
+StationPressureFlag  string  ,
+PressureTendency  int  ,
+PressureTendencyFlag  string  ,
+PressureChange  int  ,
+PressureChangeFlag  string  ,
+SeaLevelPressure  int  ,
+SeaLevelPressureFlag  string  ,
+RecordType  string  ,
+RecordTypeFlag  string  ,
+HourlyPrecip  int  ,
+HourlyPrecipFlag  string  ,
+Altimeter  int  ,
+AltimeterFlag  string ) Row format delimited  Fields terminated by ',' lines terminated by '\n'; 
+
+
+
+select avg(WindSpeed), avg(RelativeHumidity), SkyCondition from climate group by SkyCondition having SkyCondition='CLR';
+
+
+10.0	NULL	SCT220 BKN240
+14.0	NULL	SCT220 BKN240 OVC280
+NULL	100.0	SCT220 BKN300
+14.0	NULL	SCT220 OVC250
+NULL	NULL	SCT220 SCT350
+18.0	NULL	SCT230 BKN250
+13.5	NULL	SCT230 BKN260 BKN280
+NULL	NULL	SCT230 BKN280
+NULL	NULL	SCT230 SCT300
+16.0	NULL	SCT240 OVC300
+13.608272506082725	100.0	SCT250
+11.0	NULL	SCT250 BKN350
+NULL	NULL	SCT250 SCT270 SCT300
+23.0	NULL	SCT260 BKN300
+
+
+
+    > select AVG(WindSpeed), AVG(RelativeHumidity), SkyCondition from climate group by SkyCondition having SkyCondition='CLR';
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
+Query ID = hadoop_20180420114012_c3a59f44-5e40-42c7-b9e8-f4d49b43ee48
+Total jobs = 1
+Launching Job 1 out of 1
+Number of reduce tasks not specified. Estimated from input data size: 3
+In order to change the average load for a reducer (in bytes):
+  set hive.exec.reducers.bytes.per.reducer=<number>
+In order to limit the maximum number of reducers:
+  set hive.exec.reducers.max=<number>
+In order to set a constant number of reducers:
+  set mapreduce.job.reduces=<number>
+Starting Job = job_1524194504033_0013, Tracking URL = http://namenode1:8088/proxy/application_1524194504033_0013/
+Kill Command = /usr/local/hadoop//bin/hadoop job  -kill job_1524194504033_0013
+Hadoop job information for Stage-1: number of mappers: 3; number of reducers: 3
+2018-04-20 11:40:24,667 Stage-1 map = 0%,  reduce = 0%
+2018-04-20 11:40:43,980 Stage-1 map = 11%,  reduce = 0%, Cumulative CPU 9.82 sec
+2018-04-20 11:40:46,135 Stage-1 map = 33%,  reduce = 0%, Cumulative CPU 11.33 sec
+2018-04-20 11:40:52,781 Stage-1 map = 67%,  reduce = 0%, Cumulative CPU 20.81 sec
+2018-04-20 11:41:02,504 Stage-1 map = 78%,  reduce = 0%, Cumulative CPU 25.62 sec
+2018-04-20 11:41:03,638 Stage-1 map = 100%,  reduce = 0%, Cumulative CPU 26.69 sec
+2018-04-20 11:41:06,860 Stage-1 map = 100%,  reduce = 33%, Cumulative CPU 28.95 sec
+2018-04-20 11:41:10,040 Stage-1 map = 100%,  reduce = 67%, Cumulative CPU 31.06 sec
+2018-04-20 11:41:12,163 Stage-1 map = 100%,  reduce = 100%, Cumulative CPU 33.02 sec
+MapReduce Total cumulative CPU time: 33 seconds 20 msec
+Ended Job = job_1524194504033_0013
+MapReduce Jobs Launched: 
+Stage-Stage-1: Map: 3  Reduce: 3   Cumulative CPU: 33.02 sec   HDFS Read: 585135786 HDFS Write: 302 SUCCESS
+Total MapReduce CPU Time Spent: 33 seconds 20 msec
+OK
+14.128100117721274	100.0	CLR
+Time taken: 61.562 seconds, Fetched: 1 row(s)
+
+
+=========================================================================================================================
+hive --service hiveserver2 --hiveconf hive.root.logger=INFO,console
+
+hadoop@namenode1:/usr/local/hive/bin$ beeline -u jdbc:hive2://localhost:10000 -n hadoop
+Connecting to jdbc:hive2://localhost:10000
+Connected to: Apache Hive (version 2.2.0)
+Driver: Hive JDBC (version 2.2.0)
+Transaction isolation: TRANSACTION_REPEATABLE_READ
+Beeline version 2.2.0 by Apache Hive
+0: jdbc:hive2://localhost:10000> select count(1) from climate;
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++----------+--+
+|   _c0    |
++----------+--+
+| 4496263  |
++----------+--+
+1 row selected (51.846 seconds)
+0: jdbc:hive2://localhost:10000> select AVG(WindSpeed), AVG(RelativeHumidity), SkyCondition from climate group by SkyCondition having SkyCondition='CLR';
+WARNING: Hive-on-MR is deprecated in Hive 2 and may not be available in the future versions. Consider using a different execution engine (i.e. spark, tez) or using Hive 1.X releases.
++---------------------+--------+---------------+--+
+|         _c0         |  _c1   | skycondition  |
++---------------------+--------+---------------+--+
+| 14.128100117721274  | 100.0  | CLR           |
++---------------------+--------+---------------+--+
+1 row selected (71.85 seconds)
+0: jdbc:hive2://localhost:10000> 
+
+
+
+yarn-daemon.sh stop nodemanager
+hadoop-daemon.sh stop datanode
+hadoop-daemon.sh start datanode
+yarn-daemon.sh start nodemanager
+
+
